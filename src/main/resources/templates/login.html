@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Acceso Admin – La Cueva del Jugón</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f0f1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .card {
+            background: #1a1a2e;
+            border: 1px solid #e94560;
+            border-radius: 12px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+        }
+        h1 { color: #e94560; font-size: 1.4rem; margin-bottom: 0.4rem; }
+        p  { color: #aaa; font-size: 0.85rem; margin-bottom: 1.8rem; }
+        label { display: block; text-align: left; color: #ccc; font-size: 0.85rem; margin-bottom: 0.3rem; }
+        input[type=text], input[type=password] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #0f0f1a;
+            color: #fff;
+            font-size: 0.95rem;
+            margin-bottom: 1.2rem;
+        }
+        button {
+            width: 100%;
+            padding: 0.85rem;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        button:hover { background: #c73652; }
+        .error {
+            background: #3d1515;
+            color: #ff6b6b;
+            border: 1px solid #e94560;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+        a { color: #e94560; text-decoration: none; display: block; margin-top: 1.2rem; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Panel de Administración</h1>
+        <p>La Cueva del Jugón</p>
+
+        <div class="error" th:if="${param.error}">
+            Usuario o contraseña incorrectos.
+        </div>
+
+        <form method="post" th:action="@{/login}">
+            <label>Usuario</label>
+            <input type="text" name="username" placeholder="admin" required autofocus>
+
+            <label>Contraseña</label>
+            <input type="password" name="password" placeholder="••••••••" required>
+
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+            <button type="submit">Entrar</button>
+        </form>
+
+        <a href="/">← Volver a la tienda</a>
+    </div>
+</body>
+</html>

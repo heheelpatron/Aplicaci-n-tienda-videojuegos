@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Admin – La Cueva del Jugón</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f0f1a; color: #ccc; display: flex; min-height: 100vh; }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 220px; background: #1a1a2e; padding: 2rem 1rem; display: flex; flex-direction: column; gap: 0.5rem;
+            border-right: 1px solid #2a2a40;
+        }
+        .sidebar .logo { color: #e94560; font-weight: bold; font-size: 1rem; margin-bottom: 1.5rem; text-align: center; }
+        .sidebar a {
+            display: block; padding: 0.7rem 1rem; border-radius: 8px; color: #aaa;
+            text-decoration: none; font-size: 0.9rem; transition: background 0.2s;
+        }
+        .sidebar a:hover, .sidebar a.active { background: #e94560; color: white; }
+        .sidebar .logout { margin-top: auto; }
+
+        /* MAIN */
+        .main { flex: 1; padding: 2rem; }
+        .main h1 { color: #fff; font-size: 1.5rem; margin-bottom: 0.3rem; }
+        .main .sub { color: #777; font-size: 0.85rem; margin-bottom: 2rem; }
+
+        /* CARDS STATS */
+        .stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat {
+            background: #1a1a2e; border-radius: 12px; padding: 1.5rem; border: 1px solid #2a2a40; text-align: center;
+        }
+        .stat .num { font-size: 2.5rem; font-weight: bold; color: #e94560; }
+        .stat .label { font-size: 0.8rem; color: #888; margin-top: 0.3rem; }
+
+        /* TABLE */
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .section-header h2 { color: #fff; font-size: 1.1rem; }
+        .btn { padding: 0.55rem 1.2rem; border-radius: 8px; font-size: 0.85rem; cursor: pointer; text-decoration: none; border: none; font-weight: bold; }
+        .btn-primary { background: #e94560; color: white; }
+        .btn-primary:hover { background: #c73652; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #1a1a2e; color: #e94560; padding: 0.75rem 1rem; text-align: left; font-size: 0.8rem; text-transform: uppercase; }
+        td { padding: 0.75rem 1rem; border-bottom: 1px solid #1e1e30; font-size: 0.9rem; }
+        tr:hover td { background: #15152a; }
+
+        .badge {
+            padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold;
+        }
+        .badge-ok { background: #1a3a2a; color: #4caf50; }
+        .badge-low { background: #3a1a1a; color: #e94560; }
+
+        .alert-success {
+            background: #1a3a2a; color: #4caf50; border: 1px solid #4caf50;
+            border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1.5rem; font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo">La Cueva</div>
+        <a href="/admin/dashboard" class="active">📊 Dashboard</a>
+        <a href="/admin/juegos">🕹️ Juegos</a>
+        <a href="/">🌐 Ver Tienda</a>
+        <div class="logout">
+            <form th:action="@{/logout}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit" class="btn" style="width:100%; background:#2a2a40; color:#aaa;">
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main">
+        <h1>Dashboard</h1>
+        <p class="sub">Bienvenido al panel de administración</p>
+
+        <div class="alert-success" th:if="${exito}" th:text="${exito}"></div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="num" th:text="${totalJuegos}">0</div>
+                <div class="label">Juegos en catálogo</div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>Últimos juegos</h2>
+            <a href="/admin/juegos/nuevo" class="btn btn-primary">+ Nuevo juego</a>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Título</th>
+                    <th>Género</th>
+                    <th>Plataforma</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="j : ${juegos}">
+                    <td th:text="${j.idJuego}"></td>
+                    <td th:text="${j.titulo}"></td>
+                    <td th:text="${j.genero}"></td>
+                    <td th:text="${j.plataforma ?: '-'}"></td>
+                    <td th:text="${#numbers.formatDecimal(j.precio, 1, 2)} + ' €'"></td>
+                    <td>
+                        <span th:classappend="${j.stock > 5 ? 'badge-ok' : 'badge-low'}"
+                              class="badge"
+                              th:text="${j.stock} + ' uds'"></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>

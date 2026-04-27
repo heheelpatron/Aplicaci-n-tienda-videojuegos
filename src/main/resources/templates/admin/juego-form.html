@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${accion} + ' Juego – Admin'">Juego – Admin</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f0f1a; color: #ccc; display: flex; min-height: 100vh; }
+        .sidebar { width: 220px; background: #1a1a2e; padding: 2rem 1rem; display: flex; flex-direction: column; gap: 0.5rem; border-right: 1px solid #2a2a40; }
+        .sidebar .logo { color: #e94560; font-weight: bold; font-size: 1rem; margin-bottom: 1.5rem; text-align: center; }
+        .sidebar a { display: block; padding: 0.7rem 1rem; border-radius: 8px; color: #aaa; text-decoration: none; font-size: 0.9rem; transition: background 0.2s; }
+        .sidebar a:hover, .sidebar a.active { background: #e94560; color: white; }
+        .sidebar .logout { margin-top: auto; }
+        .main { flex: 1; padding: 2rem; }
+        .main h1 { color: #fff; font-size: 1.5rem; margin-bottom: 2rem; }
+
+        .form-card { background: #1a1a2e; border-radius: 12px; padding: 2rem; max-width: 600px; border: 1px solid #2a2a40; }
+        .form-group { margin-bottom: 1.3rem; }
+        label { display: block; color: #aaa; font-size: 0.85rem; margin-bottom: 0.4rem; }
+        input[type=text], input[type=number] {
+            width: 100%; padding: 0.75rem 1rem; border-radius: 8px;
+            border: 1px solid #2a2a40; background: #0f0f1a; color: #fff; font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+        input:focus { outline: none; border-color: #e94560; }
+        input.is-invalid { border-color: #e94560; }
+        .error-msg { color: #e94560; font-size: 0.8rem; margin-top: 0.3rem; }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .btn-group { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+        .btn { padding: 0.7rem 1.5rem; border-radius: 8px; font-size: 0.9rem; cursor: pointer; border: none; font-weight: bold; text-decoration: none; }
+        .btn-primary { background: #e94560; color: white; }
+        .btn-primary:hover { background: #c73652; }
+        .btn-secondary { background: #2a2a40; color: #aaa; }
+        .btn-secondary:hover { background: #1a1a30; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo">🎮 La Cueva</div>
+        <a href="/admin/dashboard">📊 Dashboard</a>
+        <a href="/admin/juegos" class="active">🕹️ Juegos</a>
+        <a href="/">🌐 Ver Tienda</a>
+        <div class="logout">
+            <form th:action="@{/logout}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit" class="btn btn-secondary" style="width:100%">Cerrar sesión</button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main">
+        <h1 th:text="${accion} + ' Juego'">Juego</h1>
+
+        <div class="form-card">
+            <form th:action="@{/admin/juegos/guardar}" th:object="${juego}" method="post">
+                <input type="hidden" th:field="*{idJuego}">
+
+                <!-- Título -->
+                <div class="form-group">
+                    <label>Título *</label>
+                    <input type="text" th:field="*{titulo}"
+                           th:classappend="${#fields.hasErrors('titulo')} ? 'is-invalid'"
+                           placeholder="Ej: God of War Ragnarök">
+                    <div class="error-msg" th:if="${#fields.hasErrors('titulo')}" th:errors="*{titulo}"></div>
+                </div>
+
+                <!-- Género + Plataforma -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Género *</label>
+                        <input type="text" th:field="*{genero}"
+                               th:classappend="${#fields.hasErrors('genero')} ? 'is-invalid'"
+                               placeholder="Ej: Acción, RPG...">
+                        <div class="error-msg" th:if="${#fields.hasErrors('genero')}" th:errors="*{genero}"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Plataforma</label>
+                        <input type="text" th:field="*{plataforma}"
+                               placeholder="Ej: PS5, PC, Xbox...">
+                    </div>
+                </div>
+
+                <!-- Precio + Stock -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Precio (€) *</label>
+                        <input type="number" th:field="*{precio}"
+                               th:classappend="${#fields.hasErrors('precio')} ? 'is-invalid'"
+                               step="0.01" min="0.01" placeholder="59.99">
+                        <div class="error-msg" th:if="${#fields.hasErrors('precio')}" th:errors="*{precio}"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Stock *</label>
+                        <input type="number" th:field="*{stock}"
+                               th:classappend="${#fields.hasErrors('stock')} ? 'is-invalid'"
+                               min="0" placeholder="0">
+                        <div class="error-msg" th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}"></div>
+                    </div>
+                </div>
+
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a href="/admin/juegos" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

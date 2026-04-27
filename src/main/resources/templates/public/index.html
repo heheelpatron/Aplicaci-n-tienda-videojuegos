@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>La Cueva del Jugón</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f0f1a; color: #ccc; }
+
+        /* HEADER */
+        .header {
+            background: #1a1a2e; padding: 1rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid #e94560; position: sticky; top: 0; z-index: 100;
+        }
+        .logo { color: #e94560; font-weight: bold; font-size: 1.2rem; letter-spacing: 2px; }
+        nav a { color: #ccc; text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem; transition: color 0.2s; }
+        nav a:hover { color: #e94560; }
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0f0f1a 100%);
+            padding: 5rem 2rem; text-align: center; position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at center, rgba(233,69,96,0.15) 0%, transparent 70%);
+        }
+        .hero-content { position: relative; z-index: 1; }
+        .hero h1 { font-size: 3rem; color: #fff; letter-spacing: 4px; margin-bottom: 1rem; }
+        .hero p { font-size: 1.1rem; color: #aaa; max-width: 600px; margin: 0 auto 2rem; }
+        .btn {
+            display: inline-block; padding: 0.85rem 2.5rem; background: #e94560;
+            color: white; text-decoration: none; border-radius: 30px; font-weight: bold;
+            font-size: 0.95rem; transition: all 0.3s; border: 2px solid #e94560;
+        }
+        .btn:hover { background: transparent; color: #e94560; }
+
+        /* NOVEDADES */
+        section { padding: 4rem 2rem; }
+        section h2 { color: #fff; font-size: 1.8rem; text-align: center; margin-bottom: 2.5rem; position: relative; }
+        section h2::after { content: ''; display: block; width: 60px; height: 3px; background: #e94560; margin: 0.7rem auto 0; }
+
+        .grid-juegos {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem; max-width: 1200px; margin: 0 auto;
+        }
+        .juego-card {
+            background: #1a1a2e; border-radius: 12px; overflow: hidden;
+            border: 1px solid #2a2a40; transition: transform 0.3s, border-color 0.3s;
+            text-decoration: none; color: inherit; display: block;
+        }
+        .juego-card:hover { transform: translateY(-5px); border-color: #e94560; }
+        .juego-card .card-body { padding: 1.2rem; }
+        .juego-card h3 { color: #fff; font-size: 0.95rem; margin-bottom: 0.4rem; }
+        .juego-card .genero { color: #888; font-size: 0.8rem; margin-bottom: 0.6rem; }
+        .juego-card .plataforma { color: #666; font-size: 0.75rem; margin-bottom: 0.8rem; }
+        .juego-card .precio { color: #e94560; font-weight: bold; font-size: 1.1rem; }
+        .juego-card .stock { font-size: 0.75rem; color: #666; margin-top: 0.3rem; }
+        .juego-card .stock.bajo { color: #e94560; }
+
+        /* FOOTER */
+        .footer {
+            background: #1a1a2e; padding: 3rem 2rem; border-top: 2px solid #2a2a40;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 2rem;
+        }
+        .footer h4 { color: #e94560; margin-bottom: 1rem; font-size: 0.95rem; }
+        .footer p, .footer a { color: #888; font-size: 0.85rem; display: block; margin-bottom: 0.4rem; text-decoration: none; }
+        .footer a:hover { color: #e94560; }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">LA CUEVA DEL JUGÓN</div>
+        <nav>
+            <a href="/">Inicio</a>
+            <a href="/tienda">Tienda</a>
+            <a href="/login">Admin</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>LA CUEVA DEL JUGÓN</h1>
+            <p>Explora las últimas tendencias en videojuegos, consolas y accesorios con la tecnología más avanzada.</p>
+            <a class="btn" href="/tienda">Ver Tienda Online</a>
+        </div>
+    </section>
+
+    <section>
+        <h2>Catálogo de Juegos</h2>
+        <div class="grid-juegos">
+            <a class="juego-card"
+               th:each="j : ${juegos}"
+               th:href="@{/juego/{id}(id=${j.idJuego})}">
+                <div class="card-body">
+                    <div class="genero" th:text="${j.genero}"></div>
+                    <h3 th:text="${j.titulo}">Título</h3>
+                    <div class="plataforma" th:text="${j.plataforma ?: ''}"></div>
+                    <div class="precio" th:text="${#numbers.formatDecimal(j.precio, 1, 2)} + ' €'"></div>
+                    <div class="stock"
+                         th:classappend="${j.stock <= 5 ? 'bajo' : ''}"
+                         th:text="${j.stock > 0 ? j.stock + ' en stock' : 'Sin stock'}"></div>
+                </div>
+            </a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(juegos)}"
+             style="text-align:center; padding: 3rem; color: #555;">
+            <p>No hay juegos disponibles todavía.</p>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div>
+            <h4>Contacto</h4>
+            <p>angelropozo51@gmail.com</p>
+            <p>Madrid, Madrid</p>
+        </div>
+        <div>
+            <h4>Enlaces</h4>
+            <a href="/">Inicio</a>
+            <a href="/tienda">Tienda</a>
+        </div>
+        <div>
+            <h4>© 2026 La Cueva del Jugón</h4>
+            <p>Videojuegos: Tu experiencia en un clic.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
