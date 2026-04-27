@@ -1,2 +1,2 @@
-# Aplicaci-n-tienda-videojuegos
+# Aplicación-tienda-videojuegos
 Proyecto de una aplicacion de tienda de videojuegos
